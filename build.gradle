@@ -1,0 +1,121 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.minecraftforge.licenser' version '1.0.1'
+    id 'net.minecraftforge.gradleutils' version '2.3.6'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+group = 'net.minecraftforge'
+
+version = gradleutils.tagOffsetVersion
+println('Version: ' + version)
+
+tasks.register('createJavaProbeClass', buildsrc.ClassGeneratorTask) { }
+
+tasks.register('javaProbeJar', Jar) {
+    destinationDirectory = layout.buildDirectory.dir('libs')
+    archiveBaseName = project.name
+    archiveClassifier = 'probe'
+    manifest {
+        attributes([
+            'Main-Class': 'JavaProbe'
+        ] as LinkedHashMap)
+        attributes([
+            'Main-Class':            'JavaProbe',
+            'Specification-Title':   'Java Probe',
+            'Specification-Vendor':  'Forge Development LLC',
+            'Specification-Version':  gradleutils.gitInfo.tag,
+            'Implementation-Title':  'javaprobe',
+            'Implementation-Vendor': 'Forge Development LLC',
+            'Implementation-Version': project.version
+        ] as LinkedHashMap)
+    }
+
+    from(createJavaProbeClass.outputFile)
+}
+
+dependencies {
+    implementation libs.jopt
+    implementation libs.gson
+    implementation libs.jtar
+    implementation javaProbeJar.outputs.files
+}
+
+license {
+    header project.file('LICENSE-header.txt')
+    newLine false
+}
+
+java {
+    // Currently JOpt is the limiting, requiring java 8
+    // But also toolchains don't support building for anything lower then 8
+    toolchain.languageVersion = JavaLanguageVersion.of(8)
+    withSourcesJar()
+}
+
+shadowJar {
+    ext.reloc = 'net.minecraftforge.jver.reloc.'
+    relocate 'joptsimple', reloc + 'jopt'
+    relocate 'com.google.gson', reloc + 'gson'
+    relocate 'org.kamranzafar.jtar', reloc + 'jtar'
+}
+
+jar {
+    manifest {
+        attributes([
+            'Main-Class': 'net.minecraftforge.jver.Main'
+        ] as LinkedHashMap)
+        attributes([
+            'Specification-Title':   'Java Version',
+            'Specification-Vendor':  'Forge Development LLC',
+            'Specification-Version':  gradleutils.gitInfo.tag,
+            'Implementation-Title':  'Java Version',
+            'Implementation-Vendor': 'Forge Development LLC',
+            'Implementation-Version': project.version
+        ] as LinkedHashMap, 'net/minecraftforge/jver/')
+    }
+    from(createJavaProbeClass.outputFile)
+}
+
+compileJava {
+    dependsOn javaProbeJar
+    options.encoding = 'UTF-8'
+}
+
+changelog {
+    from '1.0'
+}
+
+artifacts {
+    //archives javaProbeJar
+}
+
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        artifactId = project.name
+        from components.java
+        artifact(javaProbeJar)
+
+        pom {
+            name = project.name
+            description = 'Minecraft Maven Repo Generator'
+            url = 'https://github.com/MinecraftForge/java-version'
+
+            gradleutils.pom.setGitHubDetails(pom, 'java-version')
+
+            license gradleutils.pom.licenses.LGPLv2_1
+
+            developers {
+                developer gradleutils.pom.Developers.LexManos
+            }
+        }
+    }
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
+}
