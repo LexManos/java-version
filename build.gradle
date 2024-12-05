@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java-library'
     id 'idea'
@@ -59,17 +61,19 @@ java {
     withSourcesJar()
 }
 
-shadowJar {
-    ext.reloc = 'net.minecraftforge.jver.reloc.'
+tasks.named('shadowJar', ShadowJar) {
+    final String reloc = 'net.minecraftforge.java_version.reloc.'
     relocate 'joptsimple', reloc + 'jopt'
     relocate 'com.google.gson', reloc + 'gson'
     relocate 'org.kamranzafar.jtar', reloc + 'jtar'
 }
 
-jar {
+tasks.named('jar', Jar) {
     manifest {
         attributes([
-            'Main-Class': 'net.minecraftforge.jver.Main'
+            'Main-Class': 'net.minecraftforge.java_version.Main',
+            'Automatic-Module-Name': 'net.minecraftforge.java_version',
+            'Sealed': true
         ] as LinkedHashMap)
         attributes([
             'Specification-Title':   'Java Version',
@@ -78,12 +82,12 @@ jar {
             'Implementation-Title':  'Java Version',
             'Implementation-Vendor': 'Forge Development LLC',
             'Implementation-Version': project.version
-        ] as LinkedHashMap, 'net/minecraftforge/jver/')
+        ] as LinkedHashMap, 'net/minecraftforge/java_version/')
     }
     from(createJavaProbeClass.outputFile)
 }
 
-compileJava {
+tasks.named('compileJava', JavaCompile) {
     dependsOn javaProbeJar
     options.encoding = 'UTF-8'
 }

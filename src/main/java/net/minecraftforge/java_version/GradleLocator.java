@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver;
+package net.minecraftforge.java_version;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.minecraftforge.jver.api.IJavaInstall;
-import net.minecraftforge.jver.util.OS;
+import net.minecraftforge.java_version.api.IJavaInstall;
+import net.minecraftforge.java_version.util.OS;
 
 /*
  * Attempts to find the java install using various tools that Gradle uses

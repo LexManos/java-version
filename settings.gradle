@@ -5,7 +5,7 @@ pluginManagement {
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
 
 dependencyResolutionManagement {
@@ -16,7 +16,7 @@ dependencyResolutionManagement {
             library('jtar',     'org.kamranzafar:jtar:2.3')
 
             // Used by probe to generate a Java 1 compatible class file
-            version('asm', '9.7')
+            version('asm', '9.7.1')
             library('asm',         'org.ow2.asm', 'asm'        ).versionRef('asm')
             library('asm-commons', 'org.ow2.asm', 'asm-commons').versionRef('asm')
             library('asm-tree',    'org.ow2.asm', 'asm-tree'   ).versionRef('asm')

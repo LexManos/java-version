@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver.util;
+package net.minecraftforge.java_version.util;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

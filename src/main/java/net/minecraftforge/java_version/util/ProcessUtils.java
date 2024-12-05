@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver.util;
+package net.minecraftforge.java_version.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraftforge.jver.api.IJavaInstall;
+import net.minecraftforge.java_version.api.IJavaInstall;
 
 public class ProcessUtils {
     public static class Result {

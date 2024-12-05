@@ -2,16 +2,16 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver;
+package net.minecraftforge.java_version;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraftforge.jver.api.IJavaInstall;
-import net.minecraftforge.jver.api.IJavaLocator;
-import net.minecraftforge.jver.util.OS;
-import net.minecraftforge.jver.util.ProcessUtils;
+import net.minecraftforge.java_version.api.IJavaInstall;
+import net.minecraftforge.java_version.api.IJavaLocator;
+import net.minecraftforge.java_version.util.OS;
+import net.minecraftforge.java_version.util.ProcessUtils;
 
 /*
  * Attempts to find the java install using the JAVA_HOME environment variable.
