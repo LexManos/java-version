@@ -69,7 +69,9 @@ shadowJar {
 jar {
     manifest {
         attributes([
-            'Main-Class': 'net.minecraftforge.jver.Main'
+            'Main-Class': 'net.minecraftforge.jver.Main',
+            'Automatic-Module-Name': 'net.minecraftforge.java_version',
+            'Sealed': true
         ] as LinkedHashMap)
         attributes([
             'Specification-Title':   'Java Version',
