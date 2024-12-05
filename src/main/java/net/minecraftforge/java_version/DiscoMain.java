@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver;
+package net.minecraftforge.java_version;
 
 import java.io.File;
 import java.util.Arrays;
@@ -12,8 +12,8 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.util.EnumConverter;
-import net.minecraftforge.jver.util.OS;
-import net.minecraftforge.jver.util.ProcessUtils;
+import net.minecraftforge.java_version.util.OS;
+import net.minecraftforge.java_version.util.ProcessUtils;
 
 public class DiscoMain {
     public static void main(String[] args) throws Exception {

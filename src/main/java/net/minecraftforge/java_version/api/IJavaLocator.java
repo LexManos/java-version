@@ -2,14 +2,14 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver.api;
+package net.minecraftforge.java_version.api;
 
 import java.io.File;
 import java.util.List;
 
-import net.minecraftforge.jver.DiscoLocator;
-import net.minecraftforge.jver.GradleLocator;
-import net.minecraftforge.jver.JavaHomeLocator;
+import net.minecraftforge.java_version.DiscoLocator;
+import net.minecraftforge.java_version.GradleLocator;
+import net.minecraftforge.java_version.JavaHomeLocator;
 
 public interface IJavaLocator {
     /**

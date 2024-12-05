@@ -2,10 +2,10 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver.api;
+package net.minecraftforge.java_version.api;
 
 import java.io.File;
-import net.minecraftforge.jver.JavaVersion;
+import net.minecraftforge.java_version.JavaVersion;
 
 public interface IJavaInstall extends Comparable<IJavaInstall> {
     File home();

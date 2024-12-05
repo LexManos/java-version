@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver;
+package net.minecraftforge.java_version;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -41,10 +41,10 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
-import net.minecraftforge.jver.util.DownloadUtils;
-import net.minecraftforge.jver.util.HashFunction;
-import net.minecraftforge.jver.util.OS;
-import net.minecraftforge.jver.util.ProcessUtils;
+import net.minecraftforge.java_version.util.DownloadUtils;
+import net.minecraftforge.java_version.util.HashFunction;
+import net.minecraftforge.java_version.util.OS;
+import net.minecraftforge.java_version.util.ProcessUtils;
 
 /**
  * A client for the <a href="https://github.com/foojayio/discoapi">foojay disco API</a>

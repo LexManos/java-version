@@ -2,12 +2,12 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.jver.util;
+package net.minecraftforge.java_version.util;
 
 import java.io.File;
 
-import net.minecraftforge.jver.JavaVersion;
-import net.minecraftforge.jver.api.IJavaInstall;
+import net.minecraftforge.java_version.JavaVersion;
+import net.minecraftforge.java_version.api.IJavaInstall;
 
 class JavaInstall implements IJavaInstall {
     private final File home;
