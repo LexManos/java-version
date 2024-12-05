@@ -123,7 +123,7 @@ public class Disco {
 
         List<Package> ret = new ArrayList<>();
         for (Package pkg : jdks) {
-            if (version != -1 && pkg.jdk_version < version)
+            if (version != -1 && pkg.jdk_version != version)
                 continue;
             if (os != null && pkg.os() != os)
                 continue;
