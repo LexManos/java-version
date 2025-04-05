@@ -26,7 +26,7 @@ tasks.named('jar', Jar) {
             'Main-Class'            : 'JavaProbe',
             'Specification-Title'   : displayName,
             'Specification-Vendor'  : displayVendor,
-            'Specification-Version' : gradleutils.gitInfo.tag,
+            'Specification-Version' : gitversion.info.tag,
             'Implementation-Title'  : displayName,
             'Implementation-Vendor' : displayVendor,
             'Implementation-Version': rootProject.version
