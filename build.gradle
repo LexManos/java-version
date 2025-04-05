@@ -4,49 +4,34 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser' version '1.0.1'
-    id 'net.minecraftforge.gradleutils' version '2.3.6'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.shadow
 }
 
-repositories {
-    mavenCentral()
-}
-
+final displayName = 'Java Version'
+final displayVendor = 'Forge Development LLC'
 group = 'net.minecraftforge'
+version = gitversion.tagOffset
 
-version = gradleutils.tagOffsetVersion
 println('Version: ' + version)
 
-tasks.register('createJavaProbeClass', buildsrc.ClassGeneratorTask) { }
-
-tasks.register('javaProbeJar', Jar) {
-    destinationDirectory = layout.buildDirectory.dir('libs')
-    archiveBaseName = project.name
-    archiveClassifier = 'probe'
-    manifest {
-        attributes([
-            'Main-Class': 'JavaProbe'
-        ] as LinkedHashMap)
-        attributes([
-            'Main-Class':            'JavaProbe',
-            'Specification-Title':   'Java Probe',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version':  gradleutils.gitInfo.tag,
-            'Implementation-Title':  'javaprobe',
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': project.version
-        ] as LinkedHashMap)
+configurations {
+    var probe = register('probe') {
+        canBeConsumed = false
+        canBeResolved = true
     }
 
-    from(createJavaProbeClass.outputFile)
+    named('implementation') {
+        extendsFrom probe.get()
+    }
 }
 
 dependencies {
     implementation libs.jopt
     implementation libs.gson
     implementation libs.jtar
-    implementation javaProbeJar.outputs.files
+    probe project(path: ':probe', configuration: 'jar')
 }
 
 license {
@@ -62,33 +47,33 @@ java {
 }
 
 tasks.named('shadowJar', ShadowJar) {
-    final String reloc = 'net.minecraftforge.java_version.reloc.'
-    relocate 'joptsimple', reloc + 'jopt'
-    relocate 'com.google.gson', reloc + 'gson'
-    relocate 'org.kamranzafar.jtar', reloc + 'jtar'
+    enableRelocation = true
+    relocationPrefix = 'net.minecraftforge.java_version.reloc'
 }
 
 tasks.named('jar', Jar) {
     manifest {
         attributes([
-            'Main-Class': 'net.minecraftforge.java_version.Main',
+            'Main-Class'           : 'net.minecraftforge.java_version.Main',
             'Automatic-Module-Name': 'net.minecraftforge.java_version',
-            'Sealed': true
-        ] as LinkedHashMap)
+            'Sealed'               : true
+        ])
         attributes([
-            'Specification-Title':   'Java Version',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version':  gradleutils.gitInfo.tag,
-            'Implementation-Title':  'Java Version',
-            'Implementation-Vendor': 'Forge Development LLC',
+            'Specification-Title'   : displayName,
+            'Specification-Vendor'  : displayVendor,
+            'Specification-Version' : gitversion.info.tag,
+            'Implementation-Title'  : displayName,
+            'Implementation-Vendor' : displayVendor,
             'Implementation-Version': project.version
-        ] as LinkedHashMap, 'net/minecraftforge/java_version/')
+        ], 'net/minecraftforge/java_version/')
     }
-    from(createJavaProbeClass.outputFile)
+
+    from provider {
+        configurations.probe.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 tasks.named('compileJava', JavaCompile) {
-    dependsOn javaProbeJar
     options.encoding = 'UTF-8'
 }
 
@@ -96,22 +81,21 @@ changelog {
     from '1.0'
 }
 
-artifacts {
-    //archives javaProbeJar
-}
-
 publishing {
-    publications.register('mavenJava', MavenPublication).configure {
+    publications.register('mavenJava', MavenPublication) {
         artifactId = project.name
         from components.java
-        artifact(javaProbeJar)
 
-        pom {
+        artifact(provider { configurations.probe.singleFile }) {
+            classifier = 'probe'
+        }
+
+        pom { pom ->
             name = project.name
             description = 'Minecraft Maven Repo Generator'
             url = 'https://github.com/MinecraftForge/java-version'
 
-            gradleutils.pom.setGitHubDetails(pom, 'java-version')
+            gradleutils.pom.gitHubDetails = pom
 
             license gradleutils.pom.licenses.LGPLv2_1
 
@@ -120,15 +104,10 @@ publishing {
             }
         }
     }
+
     repositories {
         maven gradleutils.publishingForgeMaven
     }
 }
 
-idea {
-    module {
-        // IntelliJ IDEA does not do this by itself anymore...
-        downloadJavadoc = true
-        downloadSources = true
-    }
-}
+idea.module { downloadJavadoc = downloadSources = true }

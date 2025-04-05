@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'idea'
+    alias libs.plugins.licenser
+}
+
+final displayName = 'Java Probe'
+final displayVendor = 'Forge Development LLC'
+group = 'net.minecraftforge'
+version = rootProject.version
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(6)
+    sourceCompatibility = JavaVersion.VERSION_1_2
+    targetCompatibility = JavaVersion.VERSION_1_1
+}
+
+license {
+    header rootProject.file('LICENSE-header.txt')
+    newLine false
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+            'Main-Class'            : 'JavaProbe',
+            'Specification-Title'   : displayName,
+            'Specification-Vendor'  : displayVendor,
+            'Specification-Version' : gradleutils.gitInfo.tag,
+            'Implementation-Title'  : displayName,
+            'Implementation-Vendor' : displayVendor,
+            'Implementation-Version': rootProject.version
+        ])
+    }
+
+    archiveBaseName = rootProject.name
+    archiveClassifier = project.name
+}
+
+tasks.named('compileJava', JavaCompile) {
+    options.tap {
+        encoding = 'UTF-8'
+        fork = true
+    }
+}
+
+configurations.register('jar') {
+    canBeConsumed = true
+    canBeResolved = false
+}
+
+artifacts {
+    add 'jar', tasks.named('jar')
+}
+
+idea.module { downloadJavadoc = downloadSources = true }
