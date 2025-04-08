@@ -17,7 +17,7 @@ version = gitversion.tagOffset
 println "Version: $version"
 
 configurations {
-    resolvable('probe')
+    resolvable 'probe'
 
     runtimeClasspath {
         extendsFrom probe
@@ -74,7 +74,6 @@ tasks.named('jar', Jar) {
 }
 
 tasks.named('compileJava', JavaCompile) {
-    dependsOn gradle.includedBuild('java-probe').task(':createClass')
     options.encoding = 'UTF-8'
 }
 
