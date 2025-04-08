@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+}
+
+final projectDisplayName = 'Java Probe'
+final projectVendor = 'Forge Development LLC'
+group = 'net.minecraftforge'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_1
+    targetCompatibility = JavaVersion.VERSION_1_1
+}
+
+tasks.register('createClass', buildsrc.ClassGeneratorTask)
+
+tasks.named('jar', Jar) {
+    dependsOn createClass
+    from createClass.outputFile
+
+    manifest {
+        attributes([
+            'Main-Class': 'JavaProbe'
+        ] as LinkedHashMap)
+        attributes([
+            'Main-Class'            : 'JavaProbe',
+            'Specification-Title'   : projectDisplayName,
+            'Specification-Vendor'  : projectVendor,
+            'Specification-Version' : '1',
+            'Implementation-Title'  : 'javaprobe',
+            'Implementation-Vendor' : projectVendor,
+            'Implementation-Version': '1'
+        ] as LinkedHashMap)
+    }
+}

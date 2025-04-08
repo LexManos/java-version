@@ -1,10 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 package buildsrc;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
@@ -12,6 +13,9 @@ import org.gradle.api.tasks.TaskAction;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+
+import javax.inject.Inject;
+
 import static org.objectweb.asm.Opcodes.*;
 
 import java.io.IOException;
@@ -19,16 +23,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-abstract class ClassGeneratorTask extends DefaultTask {
+public abstract class ClassGeneratorTask extends DefaultTask {
+    @Inject
+    public abstract ProjectLayout getLayout();
+
     @OutputFile
-    abstract RegularFileProperty getOutputFile();
+    public abstract RegularFileProperty getOutputFile();
 
     public ClassGeneratorTask() {
-        // I don't think this is necessary, as the build cache should use the hash of this compiled class as the cache key
-        // But just in case, this is how to make it always run.
-        this.getOutputs().upToDateWhen(t -> false);
-        this.getOutputFile().convention(this.getProject()
-            .getLayout()
+        this.getOutputFile().convention(
+            this.getLayout()
             .getBuildDirectory()
             .file(this.getName() + "/JavaProbe.class")
         );
@@ -62,21 +66,23 @@ abstract class ClassGeneratorTask extends DefaultTask {
         mtd.visitEnd();
     }
 
+    private static final String[] PROPERTIES = {
+        "java.home",
+        "java.version",
+        "java.vendor",
+        "java.runtime.name",
+        "java.runtime.version",
+        "java.vm.name",
+        "java.vm.version",
+        "java.vm.vendor",
+        "os.arch"
+    };
+
     private void main(ClassVisitor classWriter) {
         MethodVisitor mtd = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mtd.visitCode();
 
-        for (String prop : new String[] {
-            "java.home",
-            "java.version",
-            "java.vendor",
-            "java.runtime.name",
-            "java.runtime.version",
-            "java.vm.name",
-            "java.vm.version",
-            "java.vm.vendor",
-            "os.arch"
-        }) {
+        for (String prop : PROPERTIES) {
             String prefix = "JAVA_PROBE: " + prop + " ";
             // System.out.print(prefix);
             mtd.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");

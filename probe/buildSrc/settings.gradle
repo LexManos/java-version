@@ -1,0 +1,14 @@
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+
+    versionCatalogs.register('libs') {
+        // Used by probe to generate a Java 1 compatible class file
+        version 'asm', '9.7.1'
+        library 'asm',         'org.ow2.asm', 'asm'         versionRef 'asm'
+        library 'asm-tree',    'org.ow2.asm', 'asm-tree'    versionRef 'asm'
+        library 'asm-util',    'org.ow2.asm', 'asm-util'    versionRef 'asm'
+        bundle 'asm', ['asm', 'asm-tree', 'asm-util']
+    }
+}

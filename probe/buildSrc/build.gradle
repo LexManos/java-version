@@ -1,0 +1,14 @@
+plugins {
+    id 'java-library'
+    id 'net.minecraftforge.licenser' version '1.2.0'
+}
+
+license {
+    header file('../../LICENSE-header.txt')
+    newLine false
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation libs.bundles.asm
+}
