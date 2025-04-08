@@ -40,23 +40,23 @@ public abstract class ClassGeneratorTask extends DefaultTask {
 
     @TaskAction
     public void run() throws IOException {
-        Path output = getOutputFile().getAsFile().get().toPath();
+        Path output = this.getOutputFile().getAsFile().get().toPath();
         byte[] data = buildClass();
         Files.write(output, data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
-    private byte[] buildClass() {
+    private static byte[] buildClass() {
         ClassWriter writer = new ClassWriter(0);
         writer.visit(V1_1, ACC_PUBLIC | ACC_SUPER, "JavaProbe", null, "java/lang/Object", null);
 
         constructor(writer);
-        main(writer);
+        mainMethod(writer);
 
         writer.visitEnd();
         return writer.toByteArray();
     }
 
-    private void constructor(ClassVisitor writer) {
+    private static void constructor(ClassVisitor writer) {
         MethodVisitor mtd = writer.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         mtd.visitCode();
         mtd.visitVarInsn(ALOAD, 0);
@@ -78,7 +78,7 @@ public abstract class ClassGeneratorTask extends DefaultTask {
         "os.arch"
     };
 
-    private void main(ClassVisitor classWriter) {
+    private static void mainMethod(ClassVisitor classWriter) {
         MethodVisitor mtd = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mtd.visitCode();
 
