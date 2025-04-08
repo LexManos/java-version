@@ -15,10 +15,14 @@ dependencyResolutionManagement {
 
     //@formatter:off
     versionCatalogs.register('libs') {
+        plugin 'licenser',    'net.minecraftforge.licenser'    version '1.2.0'
+        plugin 'gradleutils', 'net.minecraftforge.gradleutils' version '2.5.1'
+        plugin 'shadow',      'com.gradleup.shadow'            version '8.3.6'
+
         library 'gson',  'com.google.code.gson', 'gson'        version '2.10.1'      // > 2.9.0 needs Java 7
-        library 'jopt',  'net.sf.jopt-simple',   'jopt-simple' version '6.0-alpha-3' // Java 8
-        library 'jtar',  'org.kamranzafar',      'jtar'        version '2.3'
-        library 'probe', 'net.minecraftforge',   'java-probe'  withoutVersion()
+        library 'jopt',  'net.sf.jopt-simple',   'jopt-simple' version '6.0-alpha-3' // > 6.0-alpha Java 8
+        library 'jtar',  'org.kamranzafar',      'jtar'        version '2.3'         // Java 7
+        library 'probe', 'net.minecraftforge',   'java-probe'  withoutVersion()      // Java 1.1
     }
     //@formatter:on
 }

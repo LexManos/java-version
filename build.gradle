@@ -4,9 +4,9 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser' version '1.2.0'
-    id 'net.minecraftforge.gradleutils' version '2.5.1'
-    id 'com.gradleup.shadow' version '8.3.6'
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.shadow
 }
 
 final projectDisplayName = 'Java Version'
@@ -14,7 +14,7 @@ final projectVendor = 'Forge Development LLC'
 group = 'net.minecraftforge'
 version = gitversion.tagOffset
 
-println('Version: ' + version)
+println "Version: $version"
 
 configurations {
     resolvable('probe')
@@ -70,9 +70,7 @@ tasks.named('jar', Jar) {
         ], 'net/minecraftforge/java_version/')
     }
 
-    from provider {
-        zipTree probeJar
-    }
+    from provider { zipTree probeJar }
 }
 
 tasks.named('compileJava', JavaCompile) {
