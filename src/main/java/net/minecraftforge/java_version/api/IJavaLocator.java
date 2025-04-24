@@ -64,4 +64,8 @@ public interface IJavaLocator {
     static IJavaLocator disco(File cache) {
         return new DiscoLocator(cache);
     }
+
+    static IJavaLocator disco(File cache, boolean offline) {
+        return new DiscoLocator(cache, offline);
+    }
 }

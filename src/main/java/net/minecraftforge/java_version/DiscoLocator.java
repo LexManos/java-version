@@ -31,9 +31,15 @@ import net.minecraftforge.java_version.util.OS;
  */
 public class DiscoLocator extends JavaHomeLocator {
     private final File cache;
+    private final boolean offline;
 
     public DiscoLocator(File cache) {
+        this(cache, false);
+    }
+
+    public DiscoLocator(File cache, boolean offline) {
         this.cache = cache;
+        this.offline = offline;
     }
 
     @Override
@@ -77,7 +83,7 @@ public class DiscoLocator extends JavaHomeLocator {
     @Override
     public IJavaInstall provision(int version) {
         log("Locators failed to find any suitable installs, attempting Disco download");
-        Disco disco = new Disco(cache) { // TODO: [DISCO][Logging] Add a proper logging handler sometime
+        Disco disco = new Disco(cache, offline) { // TODO: [DISCO][Logging] Add a proper logging handler sometime
             @Override
             protected void debug(String message) {
                 DiscoLocator.this.log(message);
