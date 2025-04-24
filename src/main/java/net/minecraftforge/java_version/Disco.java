@@ -63,14 +63,24 @@ public class Disco {
 
     private final File cache;
     private final String provider;
+    private final boolean offline;
 
     public Disco(File cache) {
         this(cache, "https://api.foojay.io/disco/v3.0");
     }
 
+    public Disco(File cache, boolean offline) {
+        this(cache, "https://api.foojay.io/disco/v3.0", offline);
+    }
+
     public Disco(File cache, String provider) {
+        this(cache, provider, false);
+    }
+
+    public Disco(File cache, String provider, boolean offline) {
         this.cache = cache;
         this.provider = provider;
+        this.offline = offline;
     }
 
     protected void debug(String message) {
@@ -86,6 +96,9 @@ public class Disco {
         List<Package> ret = readJson(tmp, new TypeToken<List<Package>>(){});
         if (ret != null)
             return ret;
+
+        if (offline)
+            return null;
 
         String url = provider + "/packages/?"
             + "&package_type=jdk" // JDK has everything, could pull just the JRE but who cares.
@@ -162,6 +175,9 @@ public class Disco {
         if (ret != null && ret.info != null)
             return ret.info;
 
+        if (offline)
+            return null;
+
         //debug("Downloading package info " + pkg.id);
         String url = provider + "/ids/" + pkg.id;
         String data = DownloadUtils.downloadString(url);
@@ -198,7 +214,7 @@ public class Disco {
                     checksums.put(func, info.checksum);
                 else
                     debug("Unknown Checksum " + info.checksum_type + ": " + info.checksum);
-            } else if (info.checksum_uri != null) {
+            } else if (info.checksum_uri != null && !offline) {
                 String raw = DownloadUtils.downloadString(info.checksum_uri);
                 if (raw != null) {
                     String checksum = raw.split(" ")[0];
@@ -217,7 +233,10 @@ public class Disco {
         File archive = new File(cache, pkg.filename);
         if (!archive.exists()) {
             if (download == null) {
-                error("Failed to find download link for " + pkg.filename + " (" + pkg.id + ")");
+                if (offline)
+                    error("Offline mode, can't download " + pkg.filename + " (" + pkg.id + ")");
+                else
+                    error("Failed to find download link for " + pkg.filename + " (" + pkg.id + ")");
                 return null;
             }
             debug("Downloading " + download);

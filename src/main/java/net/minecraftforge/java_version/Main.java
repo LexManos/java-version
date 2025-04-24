@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import joptsimple.AbstractOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -30,6 +32,9 @@ public class Main {
                 "Directory to store data needed for this program")
                 .withRequiredArg().ofType(File.class).defaultsTo(new File("cache"));
 
+        AbstractOptionSpec<Void> offlineO = parser.accepts("offline",
+                "Do not attempt to download any JDKs, only use the cache");
+
         OptionSpec<Integer> versionO = parser.accepts("version",
                 "Major version of java to try and locate")
                 .withOptionalArg().ofType(Integer.class);
@@ -43,7 +48,7 @@ public class Main {
             return;
         }
         File cache = options.valueOf(cacheO);
-        DiscoLocator disco = new DiscoLocator(cache);
+        DiscoLocator disco = new DiscoLocator(cache, options.has(offlineO));
 
         List<IJavaLocator> locators = new ArrayList<>();
         locators.add(new JavaHomeLocator());
