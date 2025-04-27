@@ -1,28 +1,25 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-    }
-}
-
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
 }
 
 dependencyResolutionManagement {
-    versionCatalogs {
-        libs {
-            library('gson',     'com.google.code.gson:gson:2.10.1')           // > 2.9.0 needs Java 7
-            library('jopt',     'net.sf.jopt-simple:jopt-simple:6.0-alpha-3') // Java 8
-            library('jtar',     'org.kamranzafar:jtar:2.3')
+    repositories {
+        mavenCentral()
+    }
 
-            // Used by probe to generate a Java 1 compatible class file
-            version('asm', '9.7.1')
-            library('asm',         'org.ow2.asm', 'asm'        ).versionRef('asm')
-            library('asm-commons', 'org.ow2.asm', 'asm-commons').versionRef('asm')
-            library('asm-tree',    'org.ow2.asm', 'asm-tree'   ).versionRef('asm')
-            library('asm-util',    'org.ow2.asm', 'asm-util'   ).versionRef('asm')
-            bundle('asm', ['asm', 'asm-commons', 'asm-tree', 'asm-util'])
-        }
+    versionCatalogs.register('libs') {
+        plugin 'licenser', 'net.minecraftforge.licenser' version '1.2.0'
+        plugin 'gradleutils', 'net.minecraftforge.gradleutils' version '2.5.4'
+        plugin 'shadow', 'com.gradleup.shadow' version '8.3.6'
+
+        library 'gson', 'com.google.code.gson:gson:2.10.1'           // > 2.9.0 needs Java 7
+        library 'jopt', 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3' // Java 8
+        library 'jtar', 'org.kamranzafar:jtar:2.3'
+
+        library 'utils-download', 'net.minecraftforge', 'download-utils' version '0.3.0'
+        library 'utils-hash', 'net.minecraftforge', 'hash-utils' version '0.1.9'
+        library 'utils-logging', 'net.minecraftforge', 'log-utils' version '0.3.0'
+        bundle 'utils', ['utils-download', 'utils-hash', 'utils-logging']
     }
 }
 
