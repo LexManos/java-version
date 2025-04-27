@@ -19,6 +19,7 @@ import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,13 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.internal.bind.TypeAdapters;
+import com.google.gson.stream.JsonWriter;
+import net.minecraftforge.util.download.DownloadUtils;
+import net.minecraftforge.util.hash.HashFunction;
+import net.minecraftforge.util.logging.Log;
 import org.kamranzafar.jtar.TarEntry;
 import org.kamranzafar.jtar.TarInputStream;
 
@@ -41,8 +49,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
-import net.minecraftforge.java_version.util.DownloadUtils;
-import net.minecraftforge.java_version.util.HashFunction;
 import net.minecraftforge.java_version.util.OS;
 import net.minecraftforge.java_version.util.ProcessUtils;
 
@@ -55,11 +61,30 @@ import net.minecraftforge.java_version.util.ProcessUtils;
  * <p>
  *
  * TODO: [DISCO][Threads] Locking files for multiple processes accessing the same cache directory
- * TODO: [DISCO][Log] Proper logging API instead of System.out?
  */
 public class Disco {
     private static final int CACHE_TIMEOUT = 1000 * 60 * 60 * 12; // 12 hours
-    private static final Gson GSON = DownloadUtils.GSON;
+
+    // A GSO parser that prints good looking output, and treats empty strings as nulls
+    private static final Gson GSON = new GsonBuilder()
+        .setLenient()
+        .setPrettyPrinting()
+        .registerTypeAdapter(String.class, new TypeAdapter<String>() {
+            @Override
+            public void write(final JsonWriter out, final String value) throws IOException {
+                if (value == null || value.isEmpty())
+                    out.nullValue();
+                else
+                    TypeAdapters.STRING.write(out, value);
+            }
+
+            @Override
+            public String read(final JsonReader in) throws IOException {
+                String value = TypeAdapters.STRING.read(in);
+                return value != null && value.isEmpty() ? null : value; // Read empty strings as null
+            }
+        })
+        .create();
 
     private final File cache;
     private final String provider;
@@ -84,11 +109,11 @@ public class Disco {
     }
 
     protected void debug(String message) {
-        System.out.println(message);
+        Log.debug(message);
     }
 
     protected void error(String message) {
-        System.out.println(message);
+        Log.error(message);
     }
 
     public List<Package> getPackages() {
@@ -107,7 +132,7 @@ public class Disco {
         ;
 
         debug("Downloading package list");
-        String data = DownloadUtils.downloadString(url);
+        String data = DownloadUtils.tryDownloadString(true, url);
         if (data == null)
             return null;
 
@@ -180,7 +205,7 @@ public class Disco {
 
         //debug("Downloading package info " + pkg.id);
         String url = provider + "/ids/" + pkg.id;
-        String data = DownloadUtils.downloadString(url);
+        String data = DownloadUtils.tryDownloadString(true, url);
         if (data == null)
             return null;
 
@@ -201,7 +226,7 @@ public class Disco {
     public File download(Package pkg) {
         PackageInfo info = getInfo(pkg);
 
-        Map<HashFunction, String> checksums = new TreeMap<>();
+        Map<HashFunction, String> checksums = new EnumMap<>(HashFunction.class);
         String download = pkg.links.pkg_download_redirect;
 
         //debug("Downloading " + pkg.filename);
@@ -215,7 +240,7 @@ public class Disco {
                 else
                     debug("Unknown Checksum " + info.checksum_type + ": " + info.checksum);
             } else if (info.checksum_uri != null && !offline) {
-                String raw = DownloadUtils.downloadString(info.checksum_uri);
+                String raw = DownloadUtils.tryDownloadString(true, info.checksum_uri);
                 if (raw != null) {
                     String checksum = raw.split(" ")[0];
                     HashFunction func = HashFunction.findByHash(checksum);
@@ -240,7 +265,7 @@ public class Disco {
                 return null;
             }
             debug("Downloading " + download);
-            if (!DownloadUtils.downloadFile(archive, download)) {
+            if (!DownloadUtils.tryDownloadFile(true, archive, download)) {
                 error("Failed to download " + pkg.filename + " from " + download);
                 return null;
             }
@@ -746,7 +771,7 @@ public class Disco {
                         return MUSL;
                 }
             } else {
-                System.out.println("Failed to run `getconf GNU_LIBC_VERSION`: " + getconf.lines.get(0));
+                Log.error("Failed to run `getconf GNU_LIBC_VERSION`: " + getconf.lines.get(0));
             }
 
             ProcessUtils.Result ldd = ProcessUtils.runCommand("ldd", "--version");
@@ -756,7 +781,7 @@ public class Disco {
                         return MUSL;
                 }
             } else {
-                System.out.println("Failed to run `ldd --version`: " + ldd.lines.get(0));
+                Log.error("Failed to run `ldd --version`: " + ldd.lines.get(0));
             }
             return GLIBC;
         }

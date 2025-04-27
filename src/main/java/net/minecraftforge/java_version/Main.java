@@ -21,6 +21,7 @@ import net.minecraftforge.java_version.Disco.Distro;
 import net.minecraftforge.java_version.api.IJavaInstall;
 import net.minecraftforge.java_version.api.IJavaLocator;
 import net.minecraftforge.java_version.util.OS;
+import net.minecraftforge.util.logging.Log;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -44,7 +45,7 @@ public class Main {
 
         OptionSet options = parser.parse(args);
         if (options.has(helpO)) {
-            parser.printHelpOn(System.out);
+            parser.printHelpOn(Log.INFO);
             return;
         }
         File cache = options.valueOf(cacheO);
@@ -93,13 +94,13 @@ public class Main {
             String home = result.getAbsolutePath();
             if (!home.endsWith(File.separator))
                 home += File.separatorChar;
-            System.out.println(home);
+            Log.info(home);
         } else {
-            System.out.println("Failed to find sutable java for version " + version);
+            Log.error("Failed to find sutable java for version " + version);
             for (IJavaLocator locator : locators) {
-                System.out.println("Locator: " + locator.getClass().getSimpleName());
+                Log.error("Locator: " + locator.getClass().getSimpleName());
                 for (String line : locator.logOutput()) {
-                    System.out.println("  " + line);
+                    Log.error("  " + line);
                 }
             }
             System.exit(1);
@@ -125,10 +126,10 @@ public class Main {
         Collections.sort(installs);
 
         for (IJavaInstall install : installs) {
-            System.out.println(install.home().getAbsolutePath());
-            System.out.println("  Vendor:  " + install.vendor());
-            System.out.println("  Type:    " + (install.isJdk() ? "JDK" : "JRE"));
-            System.out.println("  Version: " + install.version());
+            Log.info(install.home().getAbsolutePath());
+            Log.info("  Vendor:  " + install.vendor());
+            Log.info("  Type:    " + (install.isJdk() ? "JDK" : "JRE"));
+            Log.info("  Version: " + install.version());
         }
 
     }

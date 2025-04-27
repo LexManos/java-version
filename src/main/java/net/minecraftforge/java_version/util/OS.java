@@ -4,6 +4,8 @@
  */
 package net.minecraftforge.java_version.util;
 
+import net.minecraftforge.util.logging.Log;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -62,7 +64,7 @@ public enum OS {
                                 }
                             }
                         } catch (IOException e) {
-                            System.out.println("Failed to read /etc/os-release: " + e.getMessage());
+                            Log.error("Failed to read /etc/os-release: " + e.getMessage());
                         }
                     }
                     return os;

@@ -44,6 +44,7 @@ dependencies {
     implementation libs.jopt
     implementation libs.gson
     implementation libs.jtar
+    implementation libs.bundles.utils
     implementation javaProbeJar.outputs.files
 }
 
