@@ -10,13 +10,19 @@ plugins {
 }
 
 final projectDisplayName = 'Java Version'
-final probeDisplayName = 'Java Probe'
 final projectVendor = 'Forge Development LLC'
 description = 'Java Version management using Disco'
 group = 'net.minecraftforge'
 version = gitversion.tagOffset
 
 println "Version: $version"
+
+java {
+    // Currently JOpt is the limiting, requiring java 8
+    // But also toolchains don't support building for anything lower then 8
+    toolchain.languageVersion = JavaLanguageVersion.of 8
+    withSourcesJar()
+}
 
 tasks.register('createJavaProbeClass', buildsrc.ClassGeneratorTask)
 
@@ -28,7 +34,7 @@ tasks.register('javaProbeJar', Jar) {
     manifest {
         attributes([
             'Main-Class'            : 'JavaProbe',
-            'Specification-Title'   : probeDisplayName,
+            'Specification-Title'   : 'Java Probe',
             'Specification-Vendor'  : projectVendor,
             'Specification-Version' : gitversion.info.tag,
             'Implementation-Title'  : 'javaprobe',
@@ -53,18 +59,6 @@ license {
     newLine false
 }
 
-java {
-    // Currently JOpt is the limiting, requiring java 8
-    // But also toolchains don't support building for anything lower then 8
-    toolchain.languageVersion = JavaLanguageVersion.of 8
-    withSourcesJar()
-}
-
-tasks.named('shadowJar', ShadowJar) {
-    enableRelocation = true
-    relocationPrefix = 'net.minecraftforge.java_version.shadow'
-}
-
 tasks.named('jar', Jar) {
     manifest {
         attributes([
@@ -85,6 +79,11 @@ tasks.named('jar', Jar) {
     from createJavaProbeClass.outputs.files
 }
 
+tasks.named('shadowJar', ShadowJar) {
+    enableRelocation = true
+    relocationPrefix = 'net.minecraftforge.java_version.shadow'
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
@@ -94,7 +93,7 @@ changelog {
 }
 
 publishing {
-    publications.register('mavenJava', MavenPublication).configure {
+    publications.register('mavenJava', MavenPublication) {
         from components.java
 
         artifactId = project.name
