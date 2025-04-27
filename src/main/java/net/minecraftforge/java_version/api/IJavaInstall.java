@@ -43,8 +43,8 @@ public interface IJavaInstall extends Comparable<IJavaInstall> {
         else if (this.version() == null && o2.version() != null)
             return 1;
         else if (this.version() != null && !this.version().equals(o2.version())) {
-            JavaVersion v1 = JavaVersion.parse(this.version());
-            JavaVersion v2 = JavaVersion.parse(o2.version());
+            JavaVersion v1 = JavaVersion.nullableParse(this.version());
+            JavaVersion v2 = JavaVersion.nullableParse(o2.version());
             if (v1 == null && v2 != null)
                 return 1;
             else if (v1 != null && v2 == null)
