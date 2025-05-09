@@ -1,11 +1,9 @@
 plugins {
     id 'java-library'
-    id 'net.minecraftforge.licenser' version '1.0.1'
+    alias libs.plugins.licenser
 }
 
-repositories {
-    mavenCentral()
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of 8
 
 license {
     header rootProject.file('../LICENSE-header.txt')
@@ -14,7 +12,5 @@ license {
 
 dependencies {
     implementation gradleApi()
-    implementation 'org.ow2.asm:asm:9.7.1'
-    implementation 'org.ow2.asm:asm-tree:9.7.1'
-    implementation 'org.ow2.asm:asm-util:9.7.1'
+    implementation libs.bundles.asm
 }
