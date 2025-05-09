@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.java_version.util;
+package net.minecraftforge.java_provisioner.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,9 +19,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-import net.minecraftforge.java_version.api.IJavaInstall;
+import net.minecraftforge.java_provisioner.api.IJavaInstall;
 
 public class ProcessUtils {
     public static class Result {
@@ -144,8 +145,11 @@ public class ProcessUtils {
         return Paths.get(URI.create(str));
     }
 
+    // Have to make this not a static string, so the shadow plugin doesn't rewrite it.
+    private static final String JAVA_PROBE = "JavaProbe" + ".class".toLowerCase(Locale.ENGLISH);
+
     public static ProbeResult testJdk(File java_home) {
-        File probe = getPathFromResource("JavaProbe.class").toFile();
+        File probe = getPathFromResource(JAVA_PROBE).toFile();
         String classpath = probe.getAbsolutePath();
         File exe = new File(java_home, "bin/java" + OS.CURRENT.exe());
 

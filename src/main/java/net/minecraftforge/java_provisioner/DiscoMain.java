@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.java_version;
+package net.minecraftforge.java_provisioner;
 
 import java.io.File;
 import java.util.Arrays;
@@ -12,8 +12,8 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.util.EnumConverter;
-import net.minecraftforge.java_version.util.OS;
-import net.minecraftforge.java_version.util.ProcessUtils;
+import net.minecraftforge.java_provisioner.util.OS;
+import net.minecraftforge.java_provisioner.util.ProcessUtils;
 import net.minecraftforge.util.logging.Log;
 
 public class DiscoMain {
@@ -21,6 +21,8 @@ public class DiscoMain {
         OptionParser parser = new OptionParser();
         parser.allowsUnrecognizedOptions();
         OptionSpec<Void> helpO = parser.accepts("help", "Displays this help message and exits");
+
+        parser.accepts("disco-main", "Instructs the executable jar to use the DiscoMain entry point");
 
         OptionSpec<File> cacheO = parser.accepts("cache",
                 "Directory to store data needed for this program")

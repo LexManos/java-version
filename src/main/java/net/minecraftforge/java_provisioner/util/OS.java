@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.java_version.util;
+package net.minecraftforge.java_provisioner.util;
 
 import net.minecraftforge.util.logging.Log;
 

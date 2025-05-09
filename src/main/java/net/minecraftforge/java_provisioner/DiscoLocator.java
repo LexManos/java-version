@@ -2,16 +2,16 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.java_version;
+package net.minecraftforge.java_provisioner;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraftforge.java_version.Disco.Arch;
-import net.minecraftforge.java_version.api.IJavaInstall;
-import net.minecraftforge.java_version.util.OS;
+import net.minecraftforge.java_provisioner.Disco.Arch;
+import net.minecraftforge.java_provisioner.api.IJavaInstall;
+import net.minecraftforge.java_provisioner.util.OS;
 
 /**
  * Locates java installs that have been downloaded from the <a href="https://github.com/foojayio/discoapi">disco API</a>

@@ -2,7 +2,7 @@
  * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
-package net.minecraftforge.java_version;
+package net.minecraftforge.java_provisioner;
 
 import java.util.ArrayList;
 import java.util.List;

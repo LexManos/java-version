@@ -1,17 +1,19 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.PropertiesFileTransformer
 
 plugins {
     id 'java-library'
     id 'idea'
+    id 'eclipse'
     id 'maven-publish'
     alias libs.plugins.licenser
     alias libs.plugins.gradleutils
     alias libs.plugins.shadow
 }
 
-final projectDisplayName = 'Java Version'
+final projectDisplayName = 'Java Provisioner'
 final projectVendor = 'Forge Development LLC'
-description = 'Java Version management using Disco'
+description = 'A tool that locates, and if nessasary, downloads a Java distribution using Disco'
 group = 'net.minecraftforge'
 version = gitversion.tagOffset
 
@@ -20,7 +22,7 @@ println "Version: $version"
 java {
     // Currently JOpt is the limiting, requiring java 8
     // But also toolchains don't support building for anything lower then 8
-    toolchain.languageVersion = JavaLanguageVersion.of 8
+    toolchain.languageVersion = JavaLanguageVersion.of(8)
     withSourcesJar()
 }
 
@@ -62,8 +64,8 @@ license {
 tasks.named('jar', Jar) {
     manifest {
         attributes([
-            'Main-Class'           : 'net.minecraftforge.java_version.Main',
-            'Automatic-Module-Name': 'net.minecraftforge.java_version',
+            'Main-Class'           : 'net.minecraftforge.java_provisioner.Main',
+            'Automatic-Module-Name': 'net.minecraftforge.java_provisioner',
             'Sealed'               : true
         ])
         attributes([
@@ -73,7 +75,7 @@ tasks.named('jar', Jar) {
             'Implementation-Title'  : projectDisplayName,
             'Implementation-Vendor' : projectVendor,
             'Implementation-Version': project.version
-        ], 'net/minecraftforge/java_version/')
+        ], 'net/minecraftforge/java_provisioner/')
     }
 
     from createJavaProbeClass.outputs.files
@@ -81,7 +83,12 @@ tasks.named('jar', Jar) {
 
 tasks.named('shadowJar', ShadowJar) {
     enableRelocation = true
-    relocationPrefix = 'net.minecraftforge.java_version.shadow'
+    relocationPrefix = 'net.minecraftforge.java_provisioner.shadow'
+    // Rewrite JOpt's message files, so that help text is displayed nicely.
+    transform(PropertiesFileTransformer) {
+        paths = [ 'Messages.properties$' ]
+        keyTransformer = { key -> relocationPrefix.get() + '.' + key }
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -118,6 +125,10 @@ publishing {
     repositories {
         maven gradleutils.publishingForgeMaven
     }
+}
+
+eclipse {
+    synchronizationTasks javaProbeJar
 }
 
 idea.module { downloadJavadoc = downloadSources = true }
