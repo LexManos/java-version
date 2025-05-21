@@ -607,6 +607,10 @@ public class Disco {
             this.names = names;
         }
 
+        public boolean is64Bit() {
+            return this == X64 || this == AMD64 || this == ARM64 || this == X86_64 || this == AARCH64 || this == PPC64 || this == PPC64EL || this == RISCV64;
+        }
+
         public String key() {
             return this.key;
         }

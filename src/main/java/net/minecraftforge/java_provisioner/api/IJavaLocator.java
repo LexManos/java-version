@@ -5,10 +5,12 @@
 package net.minecraftforge.java_provisioner.api;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraftforge.java_provisioner.DiscoLocator;
 import net.minecraftforge.java_provisioner.GradleLocator;
+import net.minecraftforge.java_provisioner.JavaDirectoryLocator;
 import net.minecraftforge.java_provisioner.JavaHomeLocator;
 
 public interface IJavaLocator {
@@ -56,6 +58,20 @@ public interface IJavaLocator {
      */
     static IJavaLocator home() {
         return new JavaHomeLocator();
+    }
+
+    /**
+     * Returns a locator that searches a set of default 'guessed' directories based on OS.
+     */
+    static IJavaLocator paths() {
+        return new JavaDirectoryLocator();
+    }
+
+    /**
+     * Returns a locator that searches the specified directories, and immediate sub-directories.
+     */
+    static IJavaLocator paths(File... dirs) {
+        return new JavaDirectoryLocator(Arrays.asList(dirs));
     }
 
     /**

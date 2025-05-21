@@ -22,7 +22,7 @@ public class DiscoMain {
         parser.allowsUnrecognizedOptions();
         OptionSpec<Void> helpO = parser.accepts("help", "Displays this help message and exits");
 
-        parser.accepts("disco-main", "Instructs the executable jar to use the DiscoMain entry point");
+        parser.accepts("disco-main", "Use the DiscoMain entry point");
 
         OptionSpec<File> cacheO = parser.accepts("cache",
                 "Directory to store data needed for this program")

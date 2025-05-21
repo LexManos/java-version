@@ -63,6 +63,7 @@ public class Main {
         List<IJavaLocator> locators = new ArrayList<>();
         locators.add(new JavaHomeLocator());
         locators.add(new GradleLocator());
+        locators.add(new JavaDirectoryLocator());
         locators.add(disco);
 
         if (options.has(testO)) {
